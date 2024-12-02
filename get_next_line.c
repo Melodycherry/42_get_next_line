@@ -6,7 +6,7 @@
 /*   By: mlaffita <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 16:52:08 by mlaffita          #+#    #+#             */
-/*   Updated: 2024/12/02 16:58:34 by mlaffita         ###   ########.fr       */
+/*   Updated: 2024/12/02 17:02:26 by mlaffita         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,26 +68,22 @@ int	handle_end_of_file(int rd, char *buffer, char **line)
 char	*get_next_line(int fd)
 {
 	static char	buffer[BUFFER_SIZE + 1] = {0};
-	char		*line = NULL;
+	char		*line;
 	int			rd;
 
+	line = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	while (1)
 	{
-		// Si le buffer est vide, lire de nouvelles données
 		if (buffer[0] == '\0')
 		{
 			rd = read_to_buffer(fd, buffer);
 			if (!handle_end_of_file(rd, buffer, &line))
 				return (ft_free(&line));
 		}
-
-		// Extraire la ligne si possible
 		if (update_line(buffer, &line))
 			return (line);
-
-		// Si fin du fichier (EOF) et pas de ligne complète
 		if (rd == GNL_EOF)
 			break ;
 	}
