@@ -6,7 +6,7 @@
 /*   By: mlaffita <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 14:05:55 by mlaffita          #+#    #+#             */
-/*   Updated: 2024/12/01 19:13:08 by mlaffita         ###   ########.fr       */
+/*   Updated: 2024/12/02 16:54:13 by mlaffita         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,19 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 	return (len_src);
 }
 
-char	*ft_strndup(char *s1, size_t n)
+char	*ft_strdup(const char *s1)
 {
+	size_t	len;
 	char	*dup;
 
-	dup = malloc(sizeof(char) * (n + 1));
+	len = ft_strlen(s1);
+	dup = (char *) malloc(sizeof(char) * (len + 1));
 	if (!dup)
 	{
 		errno = ENOMEM;
 		return (NULL);
 	}
-	ft_strlcpy(dup, s1, n + 1);
-	free (s1);
+	ft_strlcpy(dup, s1, len + 1);
 	return (dup);
 }
 

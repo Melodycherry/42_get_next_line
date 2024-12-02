@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mlaffita <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/26 14:10:42 by mlaffita          #+#    #+#             */
-/*   Updated: 2024/12/01 19:10:54 by mlaffita         ###   ########.fr       */
+/*   Created: 2024/12/02 16:52:08 by mlaffita          #+#    #+#             */
+/*   Updated: 2024/12/02 16:58:34 by mlaffita         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,11 @@ int	update_line(char *buffer, char **line)
 		*n_buff = '\0';
 		*line = ft_strjoin(*line, buffer);
 		if (!*line)
-		{
-			ft_free(&buffer);
 			return (0);
-		}
 		*line = ft_strjoin(*line, "\n");
 		if (!*line)
-		{
-			ft_free(&buffer);
 			return (0);
-		}
-		buffer = ft_strndup(n_buff + 1, BUFFER_SIZE - (n_buff - buffer));
+		ft_strlcpy(buffer, n_buff + 1, BUFFER_SIZE - (n_buff - buffer));
 		return (1);
 	}
 	*line = ft_strjoin(*line, buffer);
@@ -66,50 +60,36 @@ int	handle_end_of_file(int rd, char *buffer, char **line)
 {
 	if (rd == GNL_ERROR)
 		return (0);
-	if (rd == GNL_EOF && !*line && buffer[0] == '\0')
+	if (rd == GNL_EOF && (!*line || **line == '\0') && buffer[0] == '\0')
 		return (0);
 	return (1);
 }
 
 char	*get_next_line(int fd)
 {
-	char		buffer[BUFFER_SIZE + 1] = {0};
-	char		*line;
+	static char	buffer[BUFFER_SIZE + 1] = {0};
+	char		*line = NULL;
 	int			rd;
-	static char *static_buffer;
 
-	line = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	while (1)
 	{
-		rd = read_to_buffer(fd, buffer);
-		if (!handle_end_of_file(rd, buffer, &line))
-			return (ft_free(&line));
-		static_buffer = ft_strjoin(static_buffer, buffer);
-		if (!static_buffer)
-			return (ft_free(&line));
-		if (update_line(static_buffer, &line))
+		// Si le buffer est vide, lire de nouvelles données
+		if (buffer[0] == '\0')
+		{
+			rd = read_to_buffer(fd, buffer);
+			if (!handle_end_of_file(rd, buffer, &line))
+				return (ft_free(&line));
+		}
+
+		// Extraire la ligne si possible
+		if (update_line(buffer, &line))
 			return (line);
+
+		// Si fin du fichier (EOF) et pas de ligne complète
 		if (rd == GNL_EOF)
 			break ;
 	}
 	return (line);
 }
-
-// #include <stdio.h>
-// #include <fcntl.h>
-// int	main(int ac, char **av)
-// {
-// 	int 	fd;
-// 	char	*line;
-
-// 	fd = open(*(++av), O_RDONLY);
-// 	while ((line = get_next_line(fd)) != NULL)
-// 	{
-// 		printf("Read line: '%s'", line);
-// 		free(line);
-// 	}
-// 	close(fd);
-// 	return 0;
-// }
