@@ -6,62 +6,56 @@
 /*   By: mlaffita <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 14:05:55 by mlaffita          #+#    #+#             */
-/*   Updated: 2024/12/02 16:54:13 by mlaffita         ###   ########.fr       */
+/*   Updated: 2024/12/02 19:06:08 by mlaffita         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *s)
+int	ft_strlen(const char *str)
 {
-	const char	*p_s;
+	int	len;
 
-	if (!s)
+	if (!str)
 		return (0);
-	p_s = s;
-	while (*p_s)
-		p_s++;
-	return (p_s - s);
-}
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
-{
-	size_t	len_src;
-	size_t	to_copy;
-	size_t	i;
-
-	len_src = ft_strlen(src);
-	if (dstsize)
+	len = 0;
+	while (str[len])
 	{
-		if (len_src >= dstsize)
-			to_copy = dstsize - 1;
-		else
-			to_copy = len_src;
-		i = 0;
-		while (i < to_copy)
-		{
-			dst[i] = src[i];
-			i++;
-		}
-		dst[to_copy] = '\0';
+		len++;
 	}
-	return (len_src);
+	return (len);
 }
 
-char	*ft_strdup(const char *s1)
+unsigned int	ft_strlcpy(char *dest, const char *src, unsigned int size)
 {
-	size_t	len;
-	char	*dup;
+	unsigned int	s;
+	unsigned int	i;
 
-	len = ft_strlen(s1);
-	dup = (char *) malloc(sizeof(char) * (len + 1));
-	if (!dup)
+	s = 0;
+	i = 0;
+	while (src && src[s] != '\0')
+		s++;
+	if (size == 0)
+		return (s);
+	while (src && src[i] != '\0' && i < size - 1)
 	{
-		errno = ENOMEM;
+		dest[i] = src[i];
+		i++;
+	}
+	if (size > 0)
+		dest[i] = '\0';
+	return (s);
+}
+
+char	*ft_strndup(const char *src, unsigned int n)
+{
+	char	*dest;
+
+	dest = (char *) malloc(sizeof(char) * (n + 1));
+	if (dest == NULL)
 		return (NULL);
-	}
-	ft_strlcpy(dup, s1, len + 1);
-	return (dup);
+	ft_strlcpy(dest, src, (n + 1));
+	return (dest);
 }
 
 char	*ft_strjoin(char *s1, char *s2)
@@ -88,16 +82,16 @@ char	*ft_strjoin(char *s1, char *s2)
 
 char	*ft_strchr(const char *s, int c)
 {
-	const char	*p_s;
+	unsigned char	d;
 
-	p_s = s;
-	while (*p_s)
+	d = (unsigned char)c;
+	while (*s != '\0')
 	{
-		if (*p_s == (char) c)
-			return ((char *) p_s);
-		p_s++;
+		if (*s == d)
+			return ((char *) s);
+		s++;
 	}
-	if (*p_s == (char) c)
-		return ((char *) p_s);
+	if (d == '\0')
+		return ((char *) s);
 	return (NULL);
 }
